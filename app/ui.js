@@ -16,12 +16,12 @@ class Ui extends UiElement {
   constructor(sel, parent) {
     super(sel, parent);
 
-    this.btnSignIn = new UiElement('.btn-sign-in');
+    this.btnSignIn = new UiElement('.btn.sign-in');
     this.btnSignIn.addEventListener('click', () => {
       this.dispatchEvent(new CustomEvent('ui:sign-in'));
     });
 
-    this.listLabels = new UiLabels('.list-labels');
+    this.listLabels = new UiLabels('.list-group.labels');
   }
   render({ labels } = {}) {
     if (labels) { this.listLabels.render(labels) }
@@ -42,7 +42,9 @@ class UiLabels extends UiElement {
 //----------------------------------------------------------------------------------------
 class UiLabelItem extends UiElement {
   static createElement() {
-    return document.createElement('li');
+    const li = document.createElement('li');
+    li.classList.add('list-group-item');
+    return li;
   }
   render({ name } = {}) {
     this.el.textContent = (name || '').toString();

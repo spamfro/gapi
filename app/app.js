@@ -23,10 +23,18 @@ class App {
     this.ui = new Ui(document.body);
     this.ui.addEventListener('ui:sign-in', () => { this.signIn() });
 
-    const ul = document.body.querySelector('.list-dbg');
-    ul.appendChild(document.createElement('li')).textContent = `window: ${!!window}`;
-    ul.appendChild(document.createElement('li')).textContent = `window.localStorage: ${!!window.localStorage}`;
-    ul.appendChild(document.createElement('li')).textContent = `window.indexedDB: ${!!window.indexedDB}`;
+    const appendListItem = (ul) => (text = '') => {
+      const li = ul.appendChild(document.createElement('li'));
+      li.classList.add('list-group-item');
+      if (text) { li.textContent = text }
+    }
+    const data = [
+      `window: ${!!window}`,
+      `window.localStorage: ${!!window.localStorage}`,
+      `window.indexedDB: ${!!window.indexedDB}`
+    ];
+    const ul = document.body.querySelector('.list-group.dbg');
+    data.forEach(appendListItem(ul));
   }
 
   signIn() {
