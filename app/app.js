@@ -28,13 +28,18 @@ class App {
       li.classList.add('list-group-item');
       if (text) { li.textContent = text }
     }
-    const localStorageKeys = () => (
-      window.localStorage &&
-      Array.from(Array(window.localStorage.length), (_, i) => window.localStorage.key(i))
+    const localStoragePairs = (localStorage) => (
+      Array.from(Array(localStorage.length), (_, i) => [localStorage.key(i), !!localStorage.getItem(localStorage.key(i))])
+    );
+    const toStringLocalStorage = (localStorage) => (
+      localStorage &&
+      localStoragePairs(localStorage).map(([key, val]) => `${key}:${val}`).join(',')
     );
     const data = [
       `window: ${!!window}`,
-      `window.localStorage: [${localStorageKeys().join(',')}]`,
+      `localStorage: [${toStringLocalStorage(localStorage)}]`,
+      `window.localStorage: [${toStringLocalStorage(window.localStorage)}]`,
+      `indexedDB: ${!!indexedDB}`,
       `window.indexedDB: ${!!window.indexedDB}`
     ];
     const ul = document.body.querySelector('.list-group.dbg');

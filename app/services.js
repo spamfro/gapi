@@ -4,7 +4,7 @@ class Services {
     this.googleApi = new GoogleAPI(config.google);
     this.googleIdentityService = new GoogleIdentityService(config.google);
     this.googleMail = new GoogleMail(this.googleApi);
-    this.persistentSettings = new PersistentSettings(localStorage);
+    this.persistentSettings = new PersistentSettings(window.localStorage);
   }
 }
 
