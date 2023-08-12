@@ -3,21 +3,46 @@ class Services {
   constructor(config) {
     this.googleApi = new GoogleAPI(config.google);
     this.googleIdentityService = new GoogleIdentityService(config.google);
+    this.googleOpenID = new GoogleOpenID(config.google.openid);
     this.googleMail = new GoogleMail(this.googleApi);
     this.persistentSettings = new PersistentSettings(window.localStorage);
   }
 }
 
 //----------------------------------------------------------------------------------------
+class GoogleOpenID {
+  constructor(config) {
+    this.config = config;
+  }
+  // userInfo() {
+  //   this.configuration = this.configuration ?? fetch(this.config.configuration).then(response => response.jeson());
+  //   return this.configuration.
+  // }
+}
+//----------------------------------------------------------------------------------------
 class PersistentSettings {
   constructor(localStorage) {
     this.localStorage = localStorage;
   }
-  accessToken() {
-    return this.localStorage.getItem('access_token');
+  token() {
+    const value = this.localStorage.getItem('token');
+    try { return value && JSON.parse(value) }
+    catch { }
   }
-  setAccessToken(value) {
-    this.localStorage.setItem('access_token', value);
+  setToken(token) {
+    if (token) {
+      this.localStorage.setItem('token', JSON.stringify(token));
+    } else {
+      this.localStorage.removeItem('token');
+    }
+  }
+  email() { return this.localStorage.getItem('email') }
+  setEmail(value) {
+    if (value) {
+      this.localStorage.setItem('email', value);
+    } else {
+      this.localStorage.removeItem('email');
+    }
   }
 }
 
@@ -61,12 +86,13 @@ class GoogleIdentityService {
   constructor(config) {
     this.config = config;
   }
-  authenticateWithImplicitGrant({ prompt }) {
+  authenticateWithImplicitGrant({ login_hint, prompt }) {
     const { clientId, scope } = this.config;
     return new Promise((resolve) => {
       this.tokenClient = google.accounts.oauth2.initTokenClient({  // OAuth 2 implicit grant
         callback: resolve,
         client_id: clientId,
+        login_hint,
         scope,
       });
       this.tokenClient.requestAccessToken({ prompt });
