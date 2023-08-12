@@ -22,6 +22,11 @@ class App {
 
     this.ui = new Ui(document.body);
     this.ui.addEventListener('ui:sign-in', () => { this.signIn() });
+
+    const ul = document.body.querySelector('.list-dbg');
+    ul.appendChild(document.createElement('li')).textContent = `window: ${!!window}`;
+    ul.appendChild(document.createElement('li')).textContent = `window.localStorage: ${!!window.localStorage}`;
+    ul.appendChild(document.createElement('li')).textContent = `window.indexedDB: ${!!window.indexedDB}`;
   }
 
   signIn() {
