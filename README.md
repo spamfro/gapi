@@ -23,7 +23,7 @@ npx http-server ./app -c-1 --ssl -a spamfro.site -p 3443 --cert ./certs/cert.pem
 
 ## Deploy
 ```
-git -C ~/ws/DEV subtree split --prefix=georgevs/pilot/playground/test-googleapis-web/app -b github/test-googleapis-web
+git -C ~/ws/DEV subtree split --prefix=georgevs/pilot/playground/test-googleapis-web -b github/gapi
 
-git push git@github-spamfro:spamfro/spamfro.github.io.git --force github/test-googleapis-web:main
+git push git@github-spamfro:spamfro/gapi.git --force github/gapi:main
 ```
