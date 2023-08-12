@@ -28,9 +28,13 @@ class App {
       li.classList.add('list-group-item');
       if (text) { li.textContent = text }
     }
+    const localStorageKeys = () => (
+      window.localStorage &&
+      Array.from(Array(window.localStorage.length), (_, i) => window.localStorage.key(i))
+    );
     const data = [
       `window: ${!!window}`,
-      `window.localStorage: ${!!window.localStorage}`,
+      `window.localStorage: [${localStorageKeys().join(',')}]`,
       `window.indexedDB: ${!!window.indexedDB}`
     ];
     const ul = document.body.querySelector('.list-group.dbg');
