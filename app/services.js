@@ -14,6 +14,7 @@ class GoogleOpenID {
   constructor(config) {
     this.config = config;
   }
+  // TODO:
   // userInfo() {
   //   this.configuration = this.configuration ?? fetch(this.config.configuration).then(response => response.jeson());
   //   return this.configuration.
@@ -23,6 +24,7 @@ class GoogleOpenID {
 class PersistentSettings {
   constructor(localStorage) {
     this.localStorage = localStorage;
+    this.sensitiveValues = ['token'];
   }
   token() {
     const value = this.localStorage.getItem('token');
@@ -43,6 +45,21 @@ class PersistentSettings {
     } else {
       this.localStorage.removeItem('email');
     }
+  }
+  sub() { return this.localStorage.getItem('sub') }
+  setSub(value) {
+    if (value) {
+      this.localStorage.setItem('sub', value);
+    } else {
+      this.localStorage.removeItem('sub');
+    }
+  }
+  dbgInfo() {
+    return Array.from(Array(this.localStorage.length), (_, i) => this.localStorage.key(i))
+      .map(key => [key, this.maskSensitiveValue(key, this.localStorage.getItem(key))]);
+  }
+  maskSensitiveValue(key, value) {
+    return this.sensitiveValues.includes(key) ? '***' : value;
   }
 }
 
@@ -92,6 +109,7 @@ class GoogleIdentityService {
       this.tokenClient = google.accounts.oauth2.initTokenClient({  // OAuth 2 implicit grant
         callback: resolve,
         client_id: clientId,
+        include_granted_scopes: false,
         login_hint,
         scope,
       });

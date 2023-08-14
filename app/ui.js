@@ -6,12 +6,39 @@ class UiElement {
     this.dispatchEvent = this.el.dispatchEvent.bind(this.el);
   }
   toggleClass(classNames, cond) {
-    const list = this.el.classList;
-    (cond ? list.add : list.remove).apply(list, classNames);
+    const classList = this.el.classList;
+    (cond ? classList.add : classList.remove).apply(classList, classNames);
+  }
+  static createElement(tagName, classNames) {
+    const el = document.createElement(tagName);
+    if (classNames?.length > 0) { el.classList.add(...classNames) }
+    return el;
   }
 }
 
 //----------------------------------------------------------------------------------------
+class UiList extends UiElement {
+  render({ items }) {
+    this.el.querySelectorAll(':scope > li').forEach(el => { el.remove() });
+    if (items) {
+      items.forEach(item => {
+        new UiListItem(this.el.appendChild(UiListItem.createElement()))
+          .render(item);
+      })
+    }
+  }
+}
+//----------------------------------------------------------------------------------------
+class UiListItem extends UiElement {
+  static createElement() {
+    return super.createElement('li', ['list-group-item']);
+  }
+  render({ text }) {
+    this.el.textContent = (text || '').toString();
+  }
+}
+
+//========================================================================================
 class Ui extends UiElement {
   constructor(sel, parent) {
     super(sel, parent);
@@ -21,32 +48,24 @@ class Ui extends UiElement {
       this.dispatchEvent(new CustomEvent('ui:sign-in'));
     });
 
-    this.listLabels = new UiLabels('.list-group.labels');
+    this.listLabels = new UiLabelsList('.list-group.labels');
+    this.listDebug = new UiDebugList('.list-group.debug');
   }
-  render({ labels } = {}) {
-    if (labels) { this.listLabels.render(labels) }
-  }
-}
-
-//----------------------------------------------------------------------------------------
-class UiLabels extends UiElement {
-  render(labels = []) {
-    this.el.querySelectorAll(':scope > li').forEach(li => { li.remove() });
-    labels.forEach(label => {
-      new UiLabelItem(this.el.appendChild(UiLabelItem.createElement()))
-        .render(label);
-    });
+  render({ labels, debug }) {
+    if (labels) { this.listLabels.render({ labels }) }
+    if (debug) { this.listDebug.render({ debug }) }
   }
 }
 
 //----------------------------------------------------------------------------------------
-class UiLabelItem extends UiElement {
-  static createElement() {
-    const li = document.createElement('li');
-    li.classList.add('list-group-item');
-    return li;
+class UiLabelsList extends UiList {
+  render({ labels }) {
+    super.render({ items: (labels || []).map(({ name }) => ({ text: name })) });
   }
-  render({ name } = {}) {
-    this.el.textContent = (name || '').toString();
+}
+//----------------------------------------------------------------------------------------
+class UiDebugList extends UiList {
+  render({ debug }) {
+    if (debug?.items) super.render({ items: debug.items.map(text => ({ text })) });
   }
 }
